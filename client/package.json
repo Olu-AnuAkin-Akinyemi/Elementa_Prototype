@@ -1,0 +1,23 @@
+{
+  "name": "elementa-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ELEMENTA prototype – a browser-based elemental journaling experience with modular app/core/infra/ui layers.",
+  "scripts": {
+    "dev": "serve .",
+    "lint": "echo 'No lint step configured'",
+    "start": "serve ."
+  },
+  "keywords": [
+    "elementa",
+    "journaling",
+    "threejs",
+    "web-audio"
+  ],
+  "author": "ELEMENTA Studio",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

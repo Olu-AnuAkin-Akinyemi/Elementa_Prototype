@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="ELEMENTA is a reflective journaling experience inspired by the five elements, blending mindful prompts with immersive visuals.">
+  <meta name="keywords" content="Elementa, journaling, mindfulness, web app, meditation, reflection">
+  <meta name="author" content="ELEMENTA Studio">
+  <meta name="theme-color" content="#0b0d14">
+  <meta property="og:title" content="ELEMENTA – Elemental Journaling Experience">
+  <meta property="og:description" content="Cycle through the five elements, capture reflections, and explore audio notes within an immersive interface.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elementa.local">
+  <meta property="og:image" content="/assets/og-elementa.png">
+  <title>ELEMENTA</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+</head>
+<body>
+  <div id="app-container">
+    <div class="page active" id="earth-page" data-element="earth">
+      <div class="header-icon" data-element="earth"></div>
+      <h1 class="element-title">Earth</h1>
+      <p class="prompt-text" data-prompts-id="earth"></p>
+      <textarea 
+        class="text-input" 
+        placeholder="Write your reflection here..."
+        aria-label="Earth reflection input"
+      ></textarea>
+      <button class="save-btn" data-element="earth">Save Entry</button>
+      <div class="record-container">
+        <button class="record-btn" aria-label="Record voice note" data-element="earth"></button>
+      </div>
+    </div>
+
+    <div class="page" id="water-page" data-element="water">
+      <div class="header-icon" data-element="water"></div>
+      <h1 class="element-title">Water</h1>
+      <p class="prompt-text" data-prompts-id="water"></p>
+      <textarea 
+        class="text-input" 
+        placeholder="Write your reflection here..."
+        aria-label="Water reflection input"
+      ></textarea>
+      <button class="save-btn" data-element="water">Save Entry</button>
+      <div class="record-container">
+        <button class="record-btn" aria-label="Record voice note" data-element="water"></button>
+      </div>
+    </div>
+
+    <div class="page" id="fire-page" data-element="fire">
+      <div class="header-icon" data-element="fire"></div>
+      <h1 class="element-title">Fire</h1>
+      <p class="prompt-text" data-prompts-id="fire"></p>
+      <textarea 
+        class="text-input" 
+        placeholder="Write your reflection here..."
+        aria-label="Fire reflection input"
+      ></textarea>
+      <button class="save-btn" data-element="fire">Save Entry</button>
+      <div class="record-container">
+        <button class="record-btn" aria-label="Record voice note" data-element="fire"></button>
+      </div>
+    </div>
+
+    <div class="page" id="air-page" data-element="air">
+      <div class="header-icon" data-element="air"></div>
+      <h1 class="element-title">Air</h1>
+      <p class="prompt-text" data-prompts-id="air"></p>
+      <textarea 
+        class="text-input" 
+        placeholder="Write your reflection here..."
+        aria-label="Air reflection input"
+      ></textarea>
+      <button class="save-btn" data-element="air">Save Entry</button>
+      <div class="record-container">
+        <button class="record-btn" aria-label="Record voice note" data-element="air"></button>
+      </div>
+    </div>
+
+    <div class="page" id="spirit-page" data-element="spirit">
+      <div class="header-icon" data-element="spirit"></div>
+      <h1 class="element-title">Spirit</h1>
+      <p class="prompt-text" data-prompts-id="spirit"></p>
+      <textarea 
+        class="text-input" 
+        placeholder="Write your reflection here..."
+        aria-label="Spirit reflection input"
+      ></textarea>
+      <button class="save-btn" data-element="spirit">Save Entry</button>
+      <div class="record-container">
+        <button class="record-btn" aria-label="Record voice note" data-element="spirit"></button>
+      </div>
+    </div>
+
+    <button class="sidebar-toggle" aria-label="Open entries modal" type="button">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="sidebar-backdrop"></div>
+    <aside class="sidebar" aria-live="polite" aria-modal="true" role="dialog">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Entries</h2>
+        <button class="sidebar-close" type="button" aria-label="Close entries modal">×</button>
+      </div>
+      <div id="entries-list"></div>
+      <div class="folder-list" id="folder-list"></div>
+    </aside>
+
+    <nav class="nav-bar" aria-label="Element navigation">
+      <div class="nav-item" data-element="earth"></div>
+      <div class="nav-item" data-element="water"></div>
+      <div class="nav-item" data-element="fire"></div>
+      <div class="nav-item" data-element="air"></div>
+      <div class="nav-item" data-element="spirit"></div>
+    </nav>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
