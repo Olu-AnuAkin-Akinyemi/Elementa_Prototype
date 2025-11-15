@@ -22,7 +22,10 @@ import {
   createScene,
   animateAllMeshes,
   addMeshInteraction,
-  showStatusMessage
+  showStatusMessage,
+  renderElementPanel,
+  toggleElementPanel,
+  attachNatureHint
 } from '../ui/scribe.js';
 import { initSpaceBackground } from '../ui/spaceBackground.js';
 
@@ -72,20 +75,25 @@ const handleSaveClick = async (e) => {
 
   try {
     const entry = createEntry(element, text, element);
+    btn.dataset.state = 'saving';
+    btn.textContent = 'Saving...';
     btn.disabled = true;
     await saveEntry(entry);
     const entries = await loadEntries();
     renderEntries(entries);
     textarea.value = '';
 
+    btn.dataset.state = 'saved';
     btn.textContent = 'Saved ✓';
     showStatusMessage(page, 'Entry saved.', 'success', { autoHide: true, duration: 2500 });
     setTimeout(() => {
+      btn.dataset.state = '';
       btn.textContent = 'Save Entry';
       btn.disabled = false;
     }, 2000);
   } catch (err) {
     console.error('Save error:', err);
+    btn.dataset.state = '';
     btn.textContent = 'Error';
     showStatusMessage(page, 'Something went wrong while saving. Please try again.', 'error');
     setTimeout(() => {
@@ -125,6 +133,12 @@ const handleSidebarToggle = () => {
   const sidebar = document.querySelector('.sidebar');
   const isOpen = sidebar.classList.contains('open');
   toggleSidebar(!isOpen);
+};
+
+const handleElementPanelToggle = () => {
+  const panel = document.querySelector('.element-panel');
+  const isOpen = panel?.classList.contains('open');
+  toggleElementPanel(!isOpen);
 };
 
 export const handleEntryControlClick = async (e) => {
@@ -176,6 +190,7 @@ export const handleElementIconClick = async (e) => {
 
 export const initApp = async () => {
   initSpaceBackground();
+  renderElementPanel();
   const allElements = getAllElements();
 
   allElements.forEach((element) => {
@@ -187,10 +202,11 @@ export const initApp = async () => {
     navItem.addEventListener('click', handleNavClick);
 
     const headerContainer = document.querySelector(`.page .header-icon[data-element="${element}"]`);
-    const headerSceneData = createScene(headerContainer, element, 80, true);
+    const headerSceneData = createScene(headerContainer, element, 80, false);
     if (headerSceneData) {
       addMeshInteraction(headerContainer, headerSceneData);
     }
+    attachNatureHint(headerContainer, element);
 
     const promptEl = document.querySelector(`.prompt-text[data-prompts-id="${element}"]`);
     if (promptEl) {
@@ -217,6 +233,19 @@ export const initApp = async () => {
   }
   if (sidebarBackdrop) {
     sidebarBackdrop.addEventListener('click', () => toggleSidebar(false));
+  }
+
+  const elementPanelToggle = document.querySelector('.element-panel-toggle');
+  const elementPanelClose = document.querySelector('.element-panel-close');
+  const elementPanelBackdrop = document.querySelector('.element-panel-backdrop');
+  if (elementPanelToggle) {
+    elementPanelToggle.addEventListener('click', handleElementPanelToggle);
+  }
+  if (elementPanelClose) {
+    elementPanelClose.addEventListener('click', () => toggleElementPanel(false));
+  }
+  if (elementPanelBackdrop) {
+    elementPanelBackdrop.addEventListener('click', () => toggleElementPanel(false));
   }
 
   const entries = await loadEntries();

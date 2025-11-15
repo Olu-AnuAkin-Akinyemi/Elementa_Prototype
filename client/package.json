@@ -15,7 +15,7 @@
     "threejs",
     "web-audio"
   ],
-  "author": "ELEMENTA Studio",
+  "author": "ELEMENTA by Olu AnuAkin Akinyemi of Galorious Expression ",
   "license": "MIT",
   "devDependencies": {
     "serve": "^14.2.1"

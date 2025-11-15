@@ -60,6 +60,78 @@ export const getRandomPrompt = (element) => {
   return prompts[Math.floor(Math.random() * prompts.length)];
 };
 
+const ELEMENT_DETAILS = {
+  earth: {
+    name: 'Earth',
+    figure: 'Cube • Hexahedron',
+    description: 'The cube is the most stable of the Platonic solids, echoing the steady heartbeat of soil and stone.',
+    natureAction: 'Press your bare feet into soil or hold a smooth stone and study its details for 30 seconds.',
+    quickFacts: [
+      'Faces always meet at right angles, representing structure and ritual.',
+      'Aligned with the root chakra & long exhales.',
+      'Best used when journaling about anchors and foundations.',
+      'Six faces mirror the six cardinal directions in sacred geometry.',
+      'Mineralogists link cubes to crystalline lattices, a reminder of slow growth.'
+    ]
+  },
+  water: {
+    name: 'Water',
+    figure: 'Icosahedron',
+    description: 'Twenty triangular faces mirror endless ripples—each angle a new current or emotional tide.',
+    natureAction: 'Cup water in your hands and feel its movement, or listen closely to running water for a minute.',
+    quickFacts: [
+      'The 12 vertices encourage openness and receptivity.',
+      'Linked to sacral energy & creative surrender.',
+      'Guides reflections about trust, empathy, and release.',
+      'Marine biologists note icosahedral symmetry in viral shells and microscopic plankton.',
+      'Mystics pair it with lunar tides—journal when emotions feel tidal.'
+    ]
+  },
+  fire: {
+    name: 'Fire',
+    figure: 'Tetrahedron',
+    description: 'Four faces rise into a single point, channeling breath upward like sparks leaping from flame.',
+    natureAction: 'Warm your palms near a flame or sunlight and notice the heat before journaling.',
+    quickFacts: [
+      'Only Platonic solid that sits naturally on a base, ready to launch.',
+      'Connected to solar plexus focus & courageous action.',
+      'Use it to prompt momentum, willpower, and daring visions.',
+      'NASA engineers love tetrahedral trusses for lightweight strength.',
+      'Esoteric texts call it the alchemical “spark” that turns ideas to form.'
+    ]
+  },
+  air: {
+    name: 'Air',
+    figure: 'Octahedron',
+    description: 'Twin pyramids join at the center, symbolizing balance between inhale and exhale, thought and expression.',
+    natureAction: 'Step outside, touch a tree if possible, and take three long, intentional breaths.',
+    quickFacts: [
+      'Eight faces keep conversations circulating.',
+      'Aligned with heart-space openness & listening.',
+      'Invites journaling on clarity, language, and exchange.',
+      'Crystallographers see octahedra inside diamonds and quartz.',
+      'Symbolists say its dual pyramids channel breath between Earth and sky.'
+    ]
+  },
+  spirit: {
+    name: 'Spirit',
+    figure: 'Dodecahedron',
+    description: 'Twelve pentagons orbit a hidden center, hinting at the unseen layers that bind each element together.',
+    natureAction: 'Find a quiet view of the sky, close your eyes briefly, and notice any whispers of intuition.',
+    quickFacts: [
+      'Considered a bridge to ether in sacred geometry.',
+      'Pairs with crown chakra practices & stillness.',
+      'Supports reflections on purpose, wonder, and unity.',
+      'Astronomers model certain quasicrystals with dodecahedral symmetry.',
+      'Plato linked it to the cosmos—use it when questions feel infinite.'
+    ]
+  }
+};
+
+export const getElementDetails = () => ELEMENT_DETAILS;
+export const getElementDetail = (element) => ELEMENT_DETAILS[element];
+export const getNatureAction = (element) => ELEMENT_DETAILS[element]?.natureAction || '';
+
 export const createEntry = (element, text, folder = 'inbox') => ({
   id: Date.now(),
   element,
