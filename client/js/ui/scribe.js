@@ -1,11 +1,29 @@
-import { 
-  getElementGeometry, 
-  getElementColor, 
+import {
+  getElementGeometry,
+  getElementColor,
   getRandomPrompt,
   formatDate,
   getAllElements
 } from '../core/pure.js';
 import { handleElementIconClick, handleEntryControlClick } from '../app/commander.js';
+import { isWebGLSupported, applyFallbackIcon } from './webglSupport.js';
+
+const WEBGL_SUPPORTED = isWebGLSupported() && typeof THREE !== 'undefined';
+const positionStatusMessage = (statusEl) => {
+  if (!statusEl) return;
+  const page = statusEl.closest('.page');
+  if (!page) return;
+  const saveBtn = page.querySelector('.save-btn');
+
+  if (saveBtn) {
+    const saveRect = saveBtn.getBoundingClientRect();
+    const pageRect = page.getBoundingClientRect();
+    const offset = saveRect.bottom - pageRect.top + 12;
+    statusEl.style.top = `${offset}px`;
+  } else {
+    statusEl.style.top = '';
+  }
+};
 
 export const switchPage = (element) => {
   const pages = document.querySelectorAll('.page');
@@ -61,8 +79,9 @@ export const toggleSidebar = (open) => {
  * @param {HTMLElement} page - Element page container.
  * @param {string} message - Message to show.
  * @param {'info'|'success'|'warning'|'error'} [type='info'] - Message style.
+ * @param {{compact?:boolean, autoHide?:boolean, duration?:number}} [options] - UI tweaks.
  */
-export const showStatusMessage = (page, message, type = 'info') => {
+export const showStatusMessage = (page, message, type = 'info', options = {}) => {
   if (!page) return;
   let statusEl = page.querySelector('.status-message');
   if (!statusEl) {
@@ -77,7 +96,28 @@ export const showStatusMessage = (page, message, type = 'info') => {
     }
   }
   statusEl.dataset.type = type;
+  if (options.compact) {
+    statusEl.classList.add('status-message--compact');
+  } else {
+    statusEl.classList.remove('status-message--compact');
+  }
   statusEl.textContent = message;
+  positionStatusMessage(statusEl);
+  statusEl.dataset.visible = 'true';
+
+  if (statusEl._hideTimeout) {
+    clearTimeout(statusEl._hideTimeout);
+  }
+
+  if (options.autoHide) {
+    const duration = Number.isFinite(options.duration) ? options.duration : 2200;
+    statusEl._hideTimeout = setTimeout(() => {
+      statusEl.dataset.visible = 'false';
+      statusEl.textContent = '';
+      statusEl.removeAttribute('data-type');
+      statusEl.classList.remove('status-message--compact');
+    }, duration);
+  }
 };
 
 const renderFolders = () => {
@@ -193,6 +233,13 @@ export const renderEntries = (entries) => {
 const sceneDataMap = new Map();
 
 export const createScene = (container, element, size, autoRotate = true) => {
+  if (!container) return null;
+
+  if (!WEBGL_SUPPORTED) {
+    applyFallbackIcon(container, element, getElementColor(element));
+    return null;
+  }
+
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
   camera.position.z = 2;
@@ -201,8 +248,9 @@ export const createScene = (container, element, size, autoRotate = true) => {
     alpha: true,
     antialias: true
   });
-  renderer.setSize(size, size);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0x000000, 0);
+
   container.appendChild(renderer.domElement);
 
   const geometry = getElementGeometry(element);
@@ -222,6 +270,24 @@ export const createScene = (container, element, size, autoRotate = true) => {
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
   directionalLight.position.set(0, 1, 1).normalize();
   scene.add(directionalLight);
+
+  const resizeScene = () => {
+    const width = container.clientWidth || size;
+    const height = container.clientHeight || size;
+    if (!width || !height) return;
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  };
+
+  resizeScene();
+
+  if (typeof ResizeObserver !== 'undefined') {
+    const resizeObserver = new ResizeObserver(resizeScene);
+    resizeObserver.observe(container);
+  } else {
+    window.addEventListener('resize', resizeScene);
+  }
 
   const sceneData = { scene, camera, renderer, mesh, autoRotate, rotationSpeed: 0.003 };
   sceneDataMap.set(container, sceneData);
@@ -264,3 +330,9 @@ export const addMeshInteraction = (container, sceneData) => {
     }, 150);
   });
 };
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.status-message').forEach(positionStatusMessage);
+  });
+}

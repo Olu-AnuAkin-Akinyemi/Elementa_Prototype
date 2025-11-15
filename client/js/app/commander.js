@@ -24,12 +24,29 @@ import {
   addMeshInteraction,
   showStatusMessage
 } from '../ui/scribe.js';
+import { initSpaceBackground } from '../ui/spaceBackground.js';
 
 let currentRecordingButton = null;
 let activeEntryIdForMove = null;
+const navBadgeTimers = new WeakMap();
+
+const revealNavBadge = (navItem) => {
+  if (!navItem) return;
+  navItem.classList.add('nav-item--show-label');
+  if (navBadgeTimers.has(navItem)) {
+    clearTimeout(navBadgeTimers.get(navItem));
+  }
+  const timeout = setTimeout(() => {
+    navItem.classList.remove('nav-item--show-label');
+    navBadgeTimers.delete(navItem);
+  }, 1500);
+  navBadgeTimers.set(navItem, timeout);
+};
 
 const handleNavClick = (e) => {
-  const element = e.currentTarget.dataset.element;
+  const navItem = e.currentTarget;
+  revealNavBadge(navItem);
+  const element = navItem.dataset.element;
   if (!isValidElement(element)) return;
 
   switchPage(element);
@@ -44,7 +61,12 @@ const handleSaveClick = async (e) => {
   const text = textarea.value.trim();
 
   if (!text) {
-    showStatusMessage(page, 'Feel free to type your thoughts and feelings or record what is on your heart.', 'info');
+    showStatusMessage(
+      page,
+      'Type your feelings or record what is on your heart.',
+      'info',
+      { compact: true, autoHide: true, duration: 5000 }
+    );
     return;
   }
 
@@ -57,7 +79,7 @@ const handleSaveClick = async (e) => {
     textarea.value = '';
 
     btn.textContent = 'Saved ✓';
-    showStatusMessage(page, 'Entry saved.', 'success');
+    showStatusMessage(page, 'Entry saved.', 'success', { autoHide: true, duration: 2500 });
     setTimeout(() => {
       btn.textContent = 'Save Entry';
       btn.disabled = false;
@@ -153,17 +175,22 @@ export const handleElementIconClick = async (e) => {
 };
 
 export const initApp = async () => {
+  initSpaceBackground();
   const allElements = getAllElements();
 
   allElements.forEach((element) => {
     const navItem = document.querySelector(`.nav-bar .nav-item[data-element="${element}"]`);
     const navSceneData = createScene(navItem, element, 50, true);
-    addMeshInteraction(navItem, navSceneData);
+    if (navSceneData) {
+      addMeshInteraction(navItem, navSceneData);
+    }
     navItem.addEventListener('click', handleNavClick);
 
     const headerContainer = document.querySelector(`.page .header-icon[data-element="${element}"]`);
     const headerSceneData = createScene(headerContainer, element, 80, true);
-    addMeshInteraction(headerContainer, headerSceneData);
+    if (headerSceneData) {
+      addMeshInteraction(headerContainer, headerSceneData);
+    }
 
     const promptEl = document.querySelector(`.prompt-text[data-prompts-id="${element}"]`);
     if (promptEl) {
@@ -195,5 +222,5 @@ export const initApp = async () => {
   const entries = await loadEntries();
   renderEntries(entries);
 
-  console.log('ELEMENTA initialized successfully with Clean Architecture.');
+  console.log('ELEMENTA initialized successfully');
 };
