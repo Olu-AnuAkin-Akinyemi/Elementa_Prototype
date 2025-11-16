@@ -200,6 +200,7 @@ export const initApp = async () => {
       addMeshInteraction(navItem, navSceneData);
     }
     navItem.addEventListener('click', handleNavClick);
+    attachNatureHint(navItem, element, { variant: 'nav', autoHideDelay: 7000 });
 
     const headerContainer = document.querySelector(`.page .header-icon[data-element="${element}"]`);
     const headerSceneData = createScene(headerContainer, element, 80, false);

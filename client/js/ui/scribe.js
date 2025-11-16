@@ -97,22 +97,24 @@ export const toggleElementPanel = (open) => {
 
 const natureHintTimeouts = new WeakMap();
 
-export const attachNatureHint = (container, element) => {
+export const attachNatureHint = (container, element, options = {}) => {
   if (!container || container.dataset.natureHintBound === 'true') return;
   const hintText = getNatureAction(element);
   if (!hintText) return;
   container.dataset.natureHintBound = 'true';
+  const { variant = 'default', autoHideDelay = 6500 } = options;
 
   let hintEl = container.querySelector('.nature-hint');
   if (!hintEl) {
     hintEl = document.createElement('div');
     hintEl.className = 'nature-hint';
     hintEl.setAttribute('role', 'status');
-    hintEl.textContent = hintText;
     container.appendChild(hintEl);
-  } else {
-    hintEl.textContent = hintText;
   }
+
+  const hintClass = variant === 'nav' ? 'nature-hint nature-hint--nav' : 'nature-hint';
+  hintEl.className = hintClass;
+  hintEl.textContent = hintText;
 
   const adjustHintPosition = () => {
     hintEl.style.setProperty('--hint-shift', '0px');
@@ -136,7 +138,7 @@ export const attachNatureHint = (container, element) => {
     const timeout = setTimeout(() => {
       hintEl.dataset.visible = 'false';
       natureHintTimeouts.delete(container);
-    }, 6500);
+    }, autoHideDelay);
     natureHintTimeouts.set(container, timeout);
   };
 
