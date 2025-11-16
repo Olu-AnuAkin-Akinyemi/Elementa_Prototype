@@ -11,6 +11,16 @@
     BlinkMacSystemFont, sans-serif;
   --jet-black: #05060d;
 }
+/* 
+.theme-deep-space {
+  --bg-color: #01030c;
+  --panel-color: rgba(4, 6, 12, 0.78);
+  --panel-border: rgba(255, 255, 255, 0.04);
+  --text-color: #f6f8ff;
+  --muted-text: rgba(246, 248, 255, 0.68);
+  --accent: #7ae2ff;
+  --jet-black: #01030c;
+} */
 
 * {
   box-sizing: border-box;
@@ -19,12 +29,12 @@
 body {
   margin: 0;
   font-family: var(--font-family);
-  /* background: radial-gradient(circle at 15% 20%, rgba(255, 125, 77, 0.25), transparent 50%),
+  background: radial-gradient(circle at 15% 20%, rgba(255, 125, 77, 0.25), transparent 50%),
     radial-gradient(circle at 70% 10%, rgba(73, 90, 255, 0.2), transparent 45%),
     radial-gradient(circle at 80% 80%, rgba(140, 80, 255, 0.15), transparent 40%),
     var(--bg-color);
-  color: var(--text-color); */
-  background: var(--bg-color);
+  color: var(--text-color);
+  background: var(--jet-black);
   color: var(--text-color);
   min-height: 100vh;
   overflow: hidden;
@@ -33,13 +43,14 @@ body {
   position: relative;
 }
 
-#space-bg {
+ #space-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
   mix-blend-mode: lighten;
+  
 }
 
 #space-bg::after {
@@ -48,12 +59,35 @@ body {
   inset: 0;
   background: radial-gradient(
       circle at 20% 15%,
-      rgba(120, 244, 255, 0.18),
+      rgba(4, 11, 11, 0.18),
       transparent 45%
     ),
     radial-gradient(
       circle at 80% 20%,
-      rgba(158, 245, 192, 0.12),
+      rgba(37, 58, 45, 0.12),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 60% 80%,
+      rgba(0, 0, 0, 0.08),
+      transparent 50%
+    );
+  filter: blur(60px);
+  opacity: 0.65;
+} 
+
+/* #space-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      circle at 20% 15%,
+      rgba(4, 11, 11, 0.18),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(59, 93, 72, 0.12),
       transparent 55%
     ),
     radial-gradient(
@@ -63,7 +97,7 @@ body {
     );
   filter: blur(60px);
   opacity: 0.65;
-}
+}  */
 
 #space-bg canvas {
   width: 100% !important;
@@ -306,9 +340,8 @@ body {
   background: rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
-  touch-action: manipulation;
+  touch-action: none;
   cursor: grab;
-
 }
 
 .element-panel-figure:active {
@@ -482,6 +515,7 @@ body {
   font-size: 1rem;
   resize: none;
   backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: Blur(18px) saturate(120%);
   box-shadow: none;
   text-align: left;
   overflow-y: auto;
