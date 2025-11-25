@@ -1,3 +1,8 @@
+/**
+ * Reflective journal prompts grouped by element, each exploring a unique aspect
+ * of the element's emotional and spiritual qualities.
+ * @constant {Object.<string, string[]>}
+ */
 export const ELEMENT_PROMPTS = {
   earth: [
     'Where have you felt most grounded and secure recently?',
@@ -31,8 +36,19 @@ export const ELEMENT_PROMPTS = {
   ]
 };
 
+/**
+ * Validates whether a given string is a recognized element name.
+ * @param {string} element - Element name to validate
+ * @returns {boolean} True if element exists in ELEMENT_PROMPTS
+ */
 export const isValidElement = (element) => element in ELEMENT_PROMPTS;
 
+/**
+ * Returns a THREE.js Platonic solid geometry for the given element.
+ * Each element corresponds to one of the five Platonic solids.
+ * @param {string} element - Element name ('earth', 'water', 'fire', 'air', 'spirit')
+ * @returns {THREE.BufferGeometry} THREE.js geometry object
+ */
 export const getElementGeometry = (element) => {
   const geometries = {
     earth: new THREE.BoxGeometry(1, 1, 1),
@@ -44,6 +60,11 @@ export const getElementGeometry = (element) => {
   return geometries[element];
 };
 
+/**
+ * Returns the hex color code associated with an element.
+ * @param {string} element - Element name ('earth', 'water', 'fire', 'air', 'spirit')
+ * @returns {number} Hex color code
+ */
 export const getElementColor = (element) => {
   const colors = {
     earth: 0x8b7355,
@@ -55,6 +76,11 @@ export const getElementColor = (element) => {
   return colors[element];
 };
 
+/**
+ * Returns a random journal prompt for the specified element.
+ * @param {string} element - Element name ('earth', 'water', 'fire', 'air', 'spirit')
+ * @returns {string} Random prompt text
+ */
 export const getRandomPrompt = (element) => {
   const prompts = ELEMENT_PROMPTS[element];
   return prompts[Math.floor(Math.random() * prompts.length)];
@@ -128,10 +154,33 @@ const ELEMENT_DETAILS = {
   }
 };
 
+/**
+ * Returns the complete element details object containing information about all elements.
+ * @returns {Object.<string, Object>} Element details with name, figure, description, natureAction, and quickFacts
+ */
 export const getElementDetails = () => ELEMENT_DETAILS;
+
+/**
+ * Returns detailed information for a specific element.
+ * @param {string} element - Element name ('earth', 'water', 'fire', 'air', 'spirit')
+ * @returns {Object} Element details with name, figure, description, natureAction, and quickFacts
+ */
 export const getElementDetail = (element) => ELEMENT_DETAILS[element];
+
+/**
+ * Returns the nature-based action suggestion for an element.
+ * @param {string} element - Element name ('earth', 'water', 'fire', 'air', 'spirit')
+ * @returns {string} Nature action text, or empty string if not found
+ */
 export const getNatureAction = (element) => ELEMENT_DETAILS[element]?.natureAction || '';
 
+/**
+ * Creates a new journal entry object with timestamp and metadata.
+ * @param {string} element - Element name ('earth', 'water', 'fire', 'air', 'spirit')
+ * @param {string} text - Entry text content
+ * @param {string} [folder='inbox'] - Folder/category for the entry
+ * @returns {Object} Entry object with id, element, text, folder, and ISO date
+ */
 export const createEntry = (element, text, folder = 'inbox') => ({
   id: Date.now(),
   element,
@@ -140,6 +189,11 @@ export const createEntry = (element, text, folder = 'inbox') => ({
   date: new Date().toISOString()
 });
 
+/**
+ * Formats an ISO date string to a human-readable format.
+ * @param {string} isoDate - ISO 8601 date string
+ * @returns {string} Formatted date string (e.g., "Jan 15, 02:30 PM")
+ */
 export const formatDate = (isoDate) => {
   const date = new Date(isoDate);
   return date.toLocaleDateString('en-US', {
@@ -150,4 +204,8 @@ export const formatDate = (isoDate) => {
   });
 };
 
+/**
+ * Returns an array of all element names in order.
+ * @returns {string[]} Array of element names
+ */
 export const getAllElements = () => ['earth', 'water', 'fire', 'air', 'spirit'];
