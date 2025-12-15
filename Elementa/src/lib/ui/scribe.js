@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import {
   getElementGeometry,
   getElementColor,
@@ -5,17 +6,20 @@ import {
   formatDate,
   getAllElements,
   getElementDetails,
-  getNatureAction
-} from '../core/pure.js';
-import { handleElementIconClick, handleEntryControlClick } from '../app/commander.js';
-import { isWebGLSupported, applyFallbackIcon } from './webglSupport.js';
+  getNatureAction,
+} from "../core/pure.js";
+import {
+  handleElementIconClick,
+  handleEntryControlClick,
+} from "../app/commander.js";
+import { isWebGLSupported, applyFallbackIcon } from "./webglSupport.js";
 
-const WEBGL_SUPPORTED = isWebGLSupported() && typeof THREE !== 'undefined';
+const WEBGL_SUPPORTED = isWebGLSupported();
 const positionStatusMessage = (statusEl) => {
   if (!statusEl) return;
-  const page = statusEl.closest('.page');
+  const page = statusEl.closest(".page");
   if (!page) return;
-  const saveBtn = page.querySelector('.save-btn');
+  const saveBtn = page.querySelector(".save-btn");
 
   if (saveBtn) {
     const saveRect = saveBtn.getBoundingClientRect();
@@ -23,24 +27,24 @@ const positionStatusMessage = (statusEl) => {
     const offset = saveRect.bottom - pageRect.top + 12;
     statusEl.style.top = `${offset}px`;
   } else {
-    statusEl.style.top = '';
+    statusEl.style.top = "";
   }
 };
 
 export const switchPage = (element) => {
-  const pages = document.querySelectorAll('.page');
+  const pages = document.querySelectorAll(".page");
   pages.forEach((page) => {
     if (page.dataset.element === element) {
-      page.classList.add('active');
+      page.classList.add("active");
     } else {
-      page.classList.remove('active');
+      page.classList.remove("active");
     }
   });
 };
 
 export const updatePrompt = (element) => {
   const page = document.querySelector(`#${element}-page`);
-  const promptEl = page.querySelector('.prompt-text');
+  const promptEl = page.querySelector(".prompt-text");
 
   if (promptEl) {
     promptEl.textContent = getRandomPrompt(element);
@@ -49,110 +53,117 @@ export const updatePrompt = (element) => {
 
 export const updateRecordButton = (btn, isRecording) => {
   if (isRecording) {
-    btn.classList.add('recording');
-    btn.setAttribute('aria-label', 'Stop recording');
+    btn.classList.add("recording");
+    btn.setAttribute("aria-label", "Stop recording");
   } else {
-    btn.classList.remove('recording');
-    btn.setAttribute('aria-label', 'Record voice note');
+    btn.classList.remove("recording");
+    btn.setAttribute("aria-label", "Record voice note");
   }
 };
 
 export const toggleSidebar = (open) => {
-  const sidebar = document.querySelector('.sidebar');
-  const toggle = document.querySelector('.sidebar-toggle');
-  const backdrop = document.querySelector('.sidebar-backdrop');
-  const allActiveControls = document.querySelectorAll('.entry-item.active-touch');
-  allActiveControls.forEach((el) => el.classList.remove('active-touch'));
+  const sidebar = document.querySelector(".sidebar");
+  const toggle = document.querySelector(".sidebar-toggle");
+  const backdrop = document.querySelector(".sidebar-backdrop");
+  const allActiveControls = document.querySelectorAll(
+    ".entry-item.active-touch"
+  );
+  allActiveControls.forEach((el) => el.classList.remove("active-touch"));
 
   if (open) {
-    sidebar.classList.add('open');
-    toggle.classList.add('open');
-    if (backdrop) backdrop.classList.add('visible');
+    sidebar.classList.add("open");
+    toggle.classList.add("open");
+    if (backdrop) backdrop.classList.add("visible");
+    document.body.classList.add("sidebar-open");
   } else {
-    sidebar.classList.remove('open');
-    toggle.classList.remove('open');
-    if (backdrop) backdrop.classList.remove('visible');
-    document.getElementById('folder-list').style.display = 'none';
+    sidebar.classList.remove("open");
+    toggle.classList.remove("open");
+    if (backdrop) backdrop.classList.remove("visible");
+    document.getElementById("folder-list").style.display = "none";
+    document.body.classList.remove("sidebar-open");
   }
 };
 
 export const toggleElementPanel = (open) => {
-  const panel = document.querySelector('.element-panel');
-  const toggle = document.querySelector('.element-panel-toggle');
-  const backdrop = document.querySelector('.element-panel-backdrop');
+  const panel = document.querySelector(".element-panel");
+  const toggle = document.querySelector(".element-panel-toggle");
+  const backdrop = document.querySelector(".element-panel-backdrop");
   if (!panel) return;
 
   if (open) {
-    panel.classList.add('open');
-    toggle?.classList.add('open');
-    backdrop?.classList.add('visible');
-    panel.setAttribute('aria-hidden', 'false');
+    panel.classList.add("open");
+    toggle?.classList.add("open");
+    backdrop?.classList.add("visible");
+    panel.setAttribute("aria-hidden", "false");
+    document.body.classList.add("element-panel-open");
   } else {
-    panel.classList.remove('open');
-    toggle?.classList.remove('open');
-    backdrop?.classList.remove('visible');
-    panel.setAttribute('aria-hidden', 'true');
+    panel.classList.remove("open");
+    toggle?.classList.remove("open");
+    backdrop?.classList.remove("visible");
+    panel.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("element-panel-open");
   }
 };
 
 const natureHintTimeouts = new WeakMap();
 
 export const attachNatureHint = (container, element, options = {}) => {
-  if (!container || container.dataset.natureHintBound === 'true') return;
+  if (!container || container.dataset.natureHintBound === "true") return;
   const hintText = getNatureAction(element);
   if (!hintText) return;
-  container.dataset.natureHintBound = 'true';
-  const { variant = 'default', autoHideDelay = 6500 } = options;
+  container.dataset.natureHintBound = "true";
+  const { variant = "default", autoHideDelay = 6500 } = options;
 
-  let hintEl = container.querySelector('.nature-hint');
+  let hintEl = container.querySelector(".nature-hint");
   if (!hintEl) {
-    hintEl = document.createElement('div');
-    hintEl.className = 'nature-hint';
-    hintEl.setAttribute('role', 'status');
+    hintEl = document.createElement("div");
+    hintEl.className = "nature-hint";
+    hintEl.setAttribute("role", "status");
     container.appendChild(hintEl);
   }
 
-  const hintClass = variant === 'nav' ? 'nature-hint nature-hint--nav' : 'nature-hint';
+  const hintClass =
+    variant === "nav" ? "nature-hint nature-hint--nav" : "nature-hint";
   hintEl.className = hintClass;
   hintEl.textContent = hintText;
 
   const adjustHintPosition = () => {
-    hintEl.style.setProperty('--hint-shift', '0px');
+    hintEl.style.setProperty("--hint-shift", "0px");
     const rect = hintEl.getBoundingClientRect();
     const padding = 12;
     let shift = 0;
     if (rect.left < padding) {
       shift = padding - rect.left;
     } else if (rect.right > window.innerWidth - padding) {
-      shift = (window.innerWidth - padding) - rect.right;
+      shift = window.innerWidth - padding - rect.right;
     }
-    hintEl.style.setProperty('--hint-shift', `${shift}px`);
+    hintEl.style.setProperty("--hint-shift", `${shift}px`);
   };
 
   const showHint = () => {
-    hintEl.dataset.visible = 'true';
+    hintEl.dataset.visible = "true";
     requestAnimationFrame(adjustHintPosition);
     if (natureHintTimeouts.has(container)) {
       clearTimeout(natureHintTimeouts.get(container));
     }
     const timeout = setTimeout(() => {
-      hintEl.dataset.visible = 'false';
+      hintEl.dataset.visible = "false";
       natureHintTimeouts.delete(container);
     }, autoHideDelay);
     natureHintTimeouts.set(container, timeout);
   };
 
   const hideHint = () => {
-    hintEl.dataset.visible = 'false';
+    hintEl.dataset.visible = "false";
     if (natureHintTimeouts.has(container)) {
       clearTimeout(natureHintTimeouts.get(container));
       natureHintTimeouts.delete(container);
     }
   };
 
-  container.addEventListener('mouseenter', showHint);
-  container.addEventListener('mouseleave', hideHint);
-  container.addEventListener('click', showHint);
+  container.addEventListener("mouseenter", showHint);
+  container.addEventListener("mouseleave", hideHint);
+  container.addEventListener("click", showHint);
 };
 
 /**
@@ -162,47 +173,54 @@ export const attachNatureHint = (container, element, options = {}) => {
  * @param {'info'|'success'|'warning'|'error'} [type='info'] - Message style.
  * @param {{compact?:boolean, autoHide?:boolean, duration?:number}} [options] - UI tweaks.
  */
-export const showStatusMessage = (page, message, type = 'info', options = {}) => {
+export const showStatusMessage = (
+  page,
+  message,
+  type = "info",
+  options = {}
+) => {
   if (!page) return;
-  let statusEl = page.querySelector('.status-message');
+  let statusEl = page.querySelector(".status-message");
   if (!statusEl) {
-    statusEl = document.createElement('p');
-    statusEl.className = 'status-message';
-    statusEl.setAttribute('aria-live', 'polite');
-    const saveBtn = page.querySelector('.save-btn');
+    statusEl = document.createElement("p");
+    statusEl.className = "status-message";
+    statusEl.setAttribute("aria-live", "polite");
+    const saveBtn = page.querySelector(".save-btn");
     if (saveBtn) {
-      saveBtn.insertAdjacentElement('afterend', statusEl);
+      saveBtn.insertAdjacentElement("afterend", statusEl);
     } else {
       page.appendChild(statusEl);
     }
   }
   statusEl.dataset.type = type;
   if (options.compact) {
-    statusEl.classList.add('status-message--compact');
+    statusEl.classList.add("status-message--compact");
   } else {
-    statusEl.classList.remove('status-message--compact');
+    statusEl.classList.remove("status-message--compact");
   }
   statusEl.textContent = message;
   positionStatusMessage(statusEl);
-  statusEl.dataset.visible = 'true';
+  statusEl.dataset.visible = "true";
 
   if (statusEl._hideTimeout) {
     clearTimeout(statusEl._hideTimeout);
   }
 
   if (options.autoHide) {
-    const duration = Number.isFinite(options.duration) ? options.duration : 2200;
+    const duration = Number.isFinite(options.duration)
+      ? options.duration
+      : 2200;
     statusEl._hideTimeout = setTimeout(() => {
-      statusEl.dataset.visible = 'false';
-      statusEl.textContent = '';
-      statusEl.removeAttribute('data-type');
-      statusEl.classList.remove('status-message--compact');
+      statusEl.dataset.visible = "false";
+      statusEl.textContent = "";
+      statusEl.removeAttribute("data-type");
+      statusEl.classList.remove("status-message--compact");
     }, duration);
   }
 };
 
 const renderFolders = () => {
-  const list = document.getElementById('folder-list');
+  const list = document.getElementById("folder-list");
   const elements = getAllElements();
 
   const folderHTML = `
@@ -216,21 +234,21 @@ const renderFolders = () => {
       </div>
     `
       )
-      .join('')}
+      .join("")}
   `;
   list.innerHTML = folderHTML;
 
-  list.querySelectorAll('.folder-item').forEach((item) => {
-    item.addEventListener('click', handleElementIconClick);
+  list.querySelectorAll(".folder-item").forEach((item) => {
+    item.addEventListener("click", handleElementIconClick);
   });
-  list.style.display = 'none';
+  list.style.display = "none";
 };
 
 export const renderEntries = (entries) => {
-  const list = document.getElementById('entries-list');
+  const list = document.getElementById("entries-list");
 
   const groupedEntries = entries.reduce((acc, entry) => {
-    const folder = entry.folder || 'inbox';
+    const folder = entry.folder || "inbox";
     if (!acc[folder]) {
       acc[folder] = [];
     }
@@ -242,22 +260,27 @@ export const renderEntries = (entries) => {
     Object.entries(groupedEntries)
       .map(([folder, folderEntries]) => {
         folderEntries.sort((a, b) => b.id - a.id);
-        const folderTitle = folder.charAt(0).toUpperCase() + folder.slice(1) + ' Entries';
+        const folderTitle =
+          folder.charAt(0).toUpperCase() + folder.slice(1) + " Entries";
 
         return `
       <h3 style="margin-top: 1rem; opacity: 0.8;">${folderTitle}</h3>
       ${folderEntries
         .map(
           (entry) => `
-        <div class="entry-item" data-entry-id="${entry.id}" data-element="${entry.element}" tabindex="0">
+        <div class="entry-item" data-entry-id="${entry.id}" data-element="${
+            entry.element
+          }" tabindex="0">
           <div class="entry-header">
             <div class="entry-meta">
-              <div class="entry-element-icon" data-element="${entry.element}" title="${entry.element.toUpperCase()}"></div>
+              <div class="entry-element-icon" data-element="${
+                entry.element
+              }" title="${entry.element.toUpperCase()}"></div>
               <div class="entry-date">${formatDate(entry.date)}</div>
             </div>
           </div>
           <div class="entry-text-snippet">
-            ${entry.text.slice(0, 50)}${entry.text.length > 50 ? '...' : ''}
+            ${entry.text.slice(0, 50)}${entry.text.length > 50 ? "..." : ""}
           </div>
           
           <div class="entry-controls" data-entry-id="${entry.id}">
@@ -268,48 +291,57 @@ export const renderEntries = (entries) => {
         </div>
       `
         )
-        .join('')}
+        .join("")}
     `;
       })
-      .join('') || '<p style="opacity: 0.5; font-size: 0.85rem;">No entries yet</p>';
+      .join("") ||
+    '<p style="opacity: 0.5; font-size: 0.85rem;">No entries yet</p>';
 
-  list.querySelectorAll('.control-icon').forEach((icon) => {
-    icon.addEventListener('click', handleEntryControlClick);
+  list.querySelectorAll(".control-icon").forEach((icon) => {
+    icon.addEventListener("click", handleEntryControlClick);
   });
 
-  list.querySelectorAll('.entry-item').forEach((item) => {
-    item.addEventListener('touchstart', (e) => {
+  list.querySelectorAll(".entry-item").forEach((item) => {
+    item.addEventListener("touchstart", (e) => {
       e.stopPropagation();
       const entryId = item.dataset.entryId;
-      const isActive = item.classList.contains('active-touch');
+      const isActive = item.classList.contains("active-touch");
 
-      document.querySelectorAll('.entry-item.active-touch').forEach((el) => {
+      document.querySelectorAll(".entry-item.active-touch").forEach((el) => {
         if (el.dataset.entryId !== entryId) {
-          el.classList.remove('active-touch');
+          el.classList.remove("active-touch");
         }
       });
 
       if (!isActive) {
-        item.classList.add('active-touch');
+        item.classList.add("active-touch");
       } else {
-        item.classList.remove('active-touch');
+        item.classList.remove("active-touch");
       }
     });
   });
 
-  document.addEventListener('touchstart', (e) => {
-    const controlsMenu = e.target.closest('.entry-controls');
-    const isEntryItem = e.target.closest('.entry-item');
-
-    if (!controlsMenu && !isEntryItem) {
-      document.querySelectorAll('.entry-item.active-touch').forEach((el) => {
-        el.classList.remove('active-touch');
-      });
-    }
-  });
-
   renderFolders();
 };
+
+// Document-level touch handler (registered once, not on every render)
+let documentTouchHandlerRegistered = false;
+const handleDocumentTouch = (e) => {
+  const controlsMenu = e.target.closest(".entry-controls");
+  const isEntryItem = e.target.closest(".entry-item");
+
+  if (!controlsMenu && !isEntryItem) {
+    document.querySelectorAll(".entry-item.active-touch").forEach((el) => {
+      el.classList.remove("active-touch");
+    });
+  }
+};
+
+// Register document touch handler once
+if (typeof window !== "undefined" && !documentTouchHandlerRegistered) {
+  document.addEventListener("touchstart", handleDocumentTouch);
+  documentTouchHandlerRegistered = true;
+}
 
 const elementDetails = getElementDetails();
 
@@ -321,34 +353,46 @@ const elementPanelState = {
     type: null,
     description: null,
     facts: null,
-    detailWrapper: null
+    detailWrapper: null,
   },
-  currentElement: null
+  currentElement: null,
 };
 
 const updateElementPanelDetail = (element) => {
   if (!element) return;
   const detail = elementDetails[element];
-  const { iconsContainer, figure, name, type, description, facts } = elementPanelState.refs;
-  if (!detail || !iconsContainer || !figure || !name || !type || !description || !facts) return;
+  const { iconsContainer, figure, name, type, description, facts } =
+    elementPanelState.refs;
+  if (
+    !detail ||
+    !iconsContainer ||
+    !figure ||
+    !name ||
+    !type ||
+    !description ||
+    !facts
+  )
+    return;
 
   elementPanelState.currentElement = element;
 
-  iconsContainer.querySelectorAll('.element-panel-icon').forEach((btn) => {
+  iconsContainer.querySelectorAll(".element-panel-icon").forEach((btn) => {
     const isActive = btn.dataset.element === element;
-    btn.classList.toggle('active', isActive);
-    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-selected", isActive ? "true" : "false");
   });
 
   name.textContent = detail.name;
   type.textContent = detail.figure;
   description.textContent = detail.description;
-  facts.innerHTML = (detail.quickFacts || []).map((fact) => `<li>${fact}</li>`).join('');
+  facts.innerHTML = (detail.quickFacts || [])
+    .map((fact) => `<li>${fact}</li>`)
+    .join("");
 
   if (elementPanelState.refs.detailWrapper) {
     elementPanelState.refs.detailWrapper.dataset.element = element;
   }
-  figure.setAttribute('aria-label', `${detail.name} geometry`);
+  figure.setAttribute("aria-label", `${detail.name} geometry`);
   destroyScene(figure);
   const panelScene = createScene(figure, element, 200, true);
   if (panelScene) {
@@ -356,18 +400,35 @@ const updateElementPanelDetail = (element) => {
   }
 };
 
-export const renderElementPanel = (defaultElement = 'earth') => {
-  const iconsContainer = document.getElementById('element-panel-icons');
-  const figure = document.getElementById('element-panel-figure');
-  const name = document.getElementById('element-panel-name');
-  const type = document.getElementById('element-panel-figure-type');
-  const description = document.getElementById('element-panel-description');
-  const facts = document.getElementById('element-panel-facts');
-  const detailWrapper = document.querySelector('.element-panel-detail');
+export const renderElementPanel = (defaultElement = "earth") => {
+  const iconsContainer = document.getElementById("element-panel-icons");
+  const figure = document.getElementById("element-panel-figure");
+  const name = document.getElementById("element-panel-name");
+  const type = document.getElementById("element-panel-figure-type");
+  const description = document.getElementById("element-panel-description");
+  const facts = document.getElementById("element-panel-facts");
+  const detailWrapper = document.querySelector(".element-panel-detail");
 
-  if (!iconsContainer || !figure || !name || !type || !description || !facts || !detailWrapper) return;
+  if (
+    !iconsContainer ||
+    !figure ||
+    !name ||
+    !type ||
+    !description ||
+    !facts ||
+    !detailWrapper
+  )
+    return;
 
-  elementPanelState.refs = { iconsContainer, figure, name, type, description, facts, detailWrapper };
+  elementPanelState.refs = {
+    iconsContainer,
+    figure,
+    name,
+    type,
+    description,
+    facts,
+    detailWrapper,
+  };
   const allElements = getAllElements();
 
   iconsContainer.innerHTML = allElements
@@ -384,13 +445,17 @@ export const renderElementPanel = (defaultElement = 'earth') => {
         </button>
       `
     )
-    .join('');
+    .join("");
 
-  iconsContainer.querySelectorAll('.element-panel-icon').forEach((btn) => {
-    btn.addEventListener('click', () => updateElementPanelDetail(btn.dataset.element));
+  iconsContainer.querySelectorAll(".element-panel-icon").forEach((btn) => {
+    btn.addEventListener("click", () =>
+      updateElementPanelDetail(btn.dataset.element)
+    );
   });
 
-  const initialElement = allElements.includes(defaultElement) ? defaultElement : allElements[0];
+  const initialElement = allElements.includes(defaultElement)
+    ? defaultElement
+    : allElements[0];
   updateElementPanelDetail(initialElement);
 };
 
@@ -404,14 +469,17 @@ export const destroyScene = (container) => {
       sceneData.resizeObserver.disconnect();
     }
     if (sceneData.resizeHandler) {
-      window.removeEventListener('resize', sceneData.resizeHandler);
+      window.removeEventListener("resize", sceneData.resizeHandler);
     }
     if (sceneData.interactionCleanup) {
       sceneData.interactionCleanup();
     }
     if (sceneData.renderer) {
       sceneData.renderer.dispose();
-      if (sceneData.renderer.domElement && sceneData.renderer.domElement.parentNode === container) {
+      if (
+        sceneData.renderer.domElement &&
+        sceneData.renderer.domElement.parentNode === container
+      ) {
         container.removeChild(sceneData.renderer.domElement);
       }
     }
@@ -425,7 +493,7 @@ export const destroyScene = (container) => {
     }
     sceneDataMap.delete(container);
   }
-  container.innerHTML = '';
+  container.innerHTML = "";
 };
 
 export const createScene = (container, element, size, autoRotate = true) => {
@@ -442,7 +510,7 @@ export const createScene = (container, element, size, autoRotate = true) => {
 
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
-    antialias: true
+    antialias: true,
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0x000000, 0);
@@ -456,7 +524,7 @@ export const createScene = (container, element, size, autoRotate = true) => {
     emissiveIntensity: 0.5,
     wireframe: true,
     transparent: true,
-    opacity: 0.8
+    opacity: 0.8,
   });
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
@@ -481,12 +549,12 @@ export const createScene = (container, element, size, autoRotate = true) => {
   let resizeObserver = null;
   let resizeHandler = null;
 
-  if (typeof ResizeObserver !== 'undefined') {
+  if (typeof ResizeObserver !== "undefined") {
     resizeObserver = new ResizeObserver(resizeScene);
     resizeObserver.observe(container);
   } else {
     resizeHandler = () => resizeScene();
-    window.addEventListener('resize', resizeHandler);
+    window.addEventListener("resize", resizeHandler);
   }
 
   const sceneData = {
@@ -499,7 +567,7 @@ export const createScene = (container, element, size, autoRotate = true) => {
     baseRotationSpeed: 0.003,
     isUserInteracting: false,
     resizeObserver,
-    resizeHandler
+    resizeHandler,
   };
   sceneDataMap.set(container, sceneData);
   return sceneData;
@@ -509,7 +577,15 @@ export const animateAllMeshes = () => {
   requestAnimationFrame(animateAllMeshes);
 
   sceneDataMap.forEach((sceneData) => {
-    const { scene, camera, renderer, mesh, autoRotate, rotationSpeed, isUserInteracting } = sceneData;
+    const {
+      scene,
+      camera,
+      renderer,
+      mesh,
+      autoRotate,
+      rotationSpeed,
+      isUserInteracting,
+    } = sceneData;
 
     if (autoRotate && !isUserInteracting) {
       mesh.rotation.x += rotationSpeed;
@@ -521,7 +597,8 @@ export const animateAllMeshes = () => {
 
 export const addMeshInteraction = (container, sceneData, options = {}) => {
   const { mesh } = sceneData;
-  const originalSpeed = sceneData.baseRotationSpeed || sceneData.rotationSpeed || 0.003;
+  const originalSpeed =
+    sceneData.baseRotationSpeed || sceneData.rotationSpeed || 0.003;
   const enableDrag = Boolean(options.enableDrag);
   const pointerState = { active: false, lastX: 0, lastY: 0 };
   const cleanupFns = [];
@@ -552,9 +629,9 @@ export const addMeshInteraction = (container, sceneData, options = {}) => {
     }, 200);
   };
 
-  bind('mouseenter', handleMouseEnter);
-  bind('mouseleave', handleMouseLeave);
-  bind('click', handleClick);
+  bind("mouseenter", handleMouseEnter);
+  bind("mouseleave", handleMouseLeave);
+  bind("click", handleClick);
 
   if (!enableDrag) {
     sceneData.interactionCleanup = () => {
@@ -602,19 +679,19 @@ export const addMeshInteraction = (container, sceneData, options = {}) => {
     }
   };
 
-  bind('pointerdown', handlePointerDown);
-  bind('pointermove', handlePointerMove);
-  bind('pointerup', releasePointer);
-  bind('pointerleave', releasePointer);
-  bind('pointercancel', releasePointer);
+  bind("pointerdown", handlePointerDown);
+  bind("pointermove", handlePointerMove);
+  bind("pointerup", releasePointer);
+  bind("pointerleave", releasePointer);
+  bind("pointercancel", releasePointer);
 
   sceneData.interactionCleanup = () => {
     cleanupFns.forEach((fn) => fn());
   };
 };
 
-if (typeof window !== 'undefined') {
-  window.addEventListener('resize', () => {
-    document.querySelectorAll('.status-message').forEach(positionStatusMessage);
+if (typeof window !== "undefined") {
+  window.addEventListener("resize", () => {
+    document.querySelectorAll(".status-message").forEach(positionStatusMessage);
   });
 }

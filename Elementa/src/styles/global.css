@@ -1,3 +1,31 @@
+/* ==========================================================================
+   ELEMENTA - Global Styles
+   ==========================================================================
+   
+   Table of Contents:
+   1. CSS Variables
+   2. Base & Reset
+   3. Space Background
+   4. App Container & Layout
+   5. Toggle Buttons
+   6. Element Panel
+   7. Page Layout & Content
+   8. Nature Hints (Tooltips)
+   9. Form Elements
+   10. Save & Record Buttons
+   11. Nav Bar
+   12. Sidebar
+   13. Entry List & Cards
+   14. Status Messages
+   15. Modal Components
+   16. Media Queries
+   
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS Variables
+   -------------------------------------------------------------------------- */
+
 :root {
   --bg-color: #05060d;
   --panel-color: rgba(8, 10, 18, 0.7);
@@ -11,16 +39,10 @@
     BlinkMacSystemFont, sans-serif;
   --jet-black: #05060d;
 }
-/* 
-.theme-deep-space {
-  --bg-color: #01030c;
-  --panel-color: rgba(4, 6, 12, 0.78);
-  --panel-border: rgba(255, 255, 255, 0.04);
-  --text-color: #f6f8ff;
-  --muted-text: rgba(246, 248, 255, 0.68);
-  --accent: #7ae2ff;
-  --jet-black: #01030c;
-} */
+
+/* --------------------------------------------------------------------------
+   2. Base & Reset
+   -------------------------------------------------------------------------- */
 
 * {
   box-sizing: border-box;
@@ -29,9 +51,17 @@
 body {
   margin: 0;
   font-family: var(--font-family);
-  background: radial-gradient(circle at 15% 20%, rgba(255, 125, 77, 0.25), transparent 50%),
+  background: radial-gradient(
+      circle at 15% 20%,
+      rgba(255, 125, 77, 0.25),
+      transparent 50%
+    ),
     radial-gradient(circle at 70% 10%, rgba(73, 90, 255, 0.2), transparent 45%),
-    radial-gradient(circle at 80% 80%, rgba(140, 80, 255, 0.15), transparent 40%),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(140, 80, 255, 0.15),
+      transparent 40%
+    ),
     var(--bg-color);
   color: var(--text-color);
   background: var(--jet-black);
@@ -43,14 +73,17 @@ body {
   position: relative;
 }
 
- #space-bg {
+/* --------------------------------------------------------------------------
+   3. Space Background
+   -------------------------------------------------------------------------- */
+
+#space-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
   mix-blend-mode: lighten;
-  
 }
 
 #space-bg::after {
@@ -62,42 +95,11 @@ body {
       rgba(4, 11, 11, 0.18),
       transparent 45%
     ),
-    radial-gradient(
-      circle at 80% 20%,
-      rgba(37, 58, 45, 0.12),
-      transparent 55%
-    ),
-    radial-gradient(
-      circle at 60% 80%,
-      rgba(0, 0, 0, 0.08),
-      transparent 50%
-    );
+    radial-gradient(circle at 80% 20%, rgba(37, 58, 45, 0.12), transparent 55%),
+    radial-gradient(circle at 60% 80%, rgba(0, 0, 0, 0.08), transparent 50%);
   filter: blur(60px);
   opacity: 0.65;
-} 
-
-/* #space-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-      circle at 20% 15%,
-      rgba(4, 11, 11, 0.18),
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 80% 20%,
-      rgba(59, 93, 72, 0.12),
-      transparent 55%
-    ),
-    radial-gradient(
-      circle at 60% 80%,
-      rgba(255, 140, 167, 0.08),
-      transparent 50%
-    );
-  filter: blur(60px);
-  opacity: 0.65;
-}  */
+}
 
 #space-bg canvas {
   width: 100% !important;
@@ -134,6 +136,10 @@ body {
   animation: auroraShift 14s ease-in-out infinite alternate;
 }
 
+/* --------------------------------------------------------------------------
+   4. App Container & Layout
+   -------------------------------------------------------------------------- */
+
 #app-container {
   display: grid;
   grid-template-columns: 1fr;
@@ -144,6 +150,10 @@ body {
   isolation: isolate;
   padding: 0 clamp(1rem, 4vw, 3rem);
 }
+
+/* --------------------------------------------------------------------------
+   5. Toggle Buttons
+   -------------------------------------------------------------------------- */
 
 .element-panel-toggle {
   position: fixed;
@@ -158,8 +168,7 @@ body {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.2),
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
@@ -167,20 +176,73 @@ body {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  z-index: 13;
+  z-index: 1000;
+  isolation: isolate;
   color: inherit;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .element-panel-toggle span {
   width: 20px;
   height: 2px;
   background: var(--text-color);
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
+/* When element panel is open, move toggle to panel edge */
 .element-panel-toggle.open {
-  display: none;
+  left: min(380px, 92vw);
+  transform: translateY(-50%) translateX(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  z-index: 1200;
+  border-color: rgba(120, 244, 255, 0.4);
+  box-shadow: 0 0 16px rgba(120, 244, 255, 0.25), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Subtle rotation indicator when open */
+.element-panel-toggle.open span {
+  background: rgba(120, 244, 255, 0.9);
+}
+
+.element-panel-toggle.open span:nth-child(1) {
+  transform: translateY(0) rotate(0);
+}
+
+.element-panel-toggle.open span:nth-child(2) {
+  opacity: 1;
+  transform: scaleX(0.6);
+}
+
+.element-panel-toggle.open span:nth-child(3) {
+  transform: translateY(0) rotate(0);
+}
+
+/* Desktop: Keep toggles visible above panels when opposite panel is open */
+.element-panel-open .sidebar-toggle,
+.sidebar-open .element-panel-toggle {
+  z-index: 1200;
+  /* Force separate compositing layer to prevent backdrop blur affecting toggle */
+  will-change: transform;
+  transform: translateZ(0);
+  /* Create isolated stacking context */
+  isolation: isolate;
+  /* Ensure toggle has solid background, not affected by backdrop blur */
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(120, 244, 255, 0.4);
+  box-shadow: 0 0 16px rgba(120, 244, 255, 0.25), 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile: Hide opposite toggle when panel is open - use own toggle or X to close */
+@media (max-width: 768px) {
+  .element-panel-open .sidebar-toggle {
+    display: none;
+  }
+
+  .sidebar-open .element-panel-toggle {
+    display: none;
+  }
 }
 
 .element-panel-backdrop {
@@ -188,6 +250,7 @@ body {
   inset: 0;
   background: rgba(2, 4, 10, 0.6);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -199,11 +262,15 @@ body {
   pointer-events: auto;
 }
 
+/* --------------------------------------------------------------------------
+   6. Element Panel
+   -------------------------------------------------------------------------- */
+
 .element-panel {
   position: fixed;
   top: 0;
   left: 0;
-  width: min(380px, 92vw);
+  width: min(380px, 82vw);
   height: 100vh;
   padding: 2rem 1.5rem 2.5rem;
   /* Enhanced glassmorphism with darker tint */
@@ -216,8 +283,7 @@ body {
   z-index: 15;
   display: flex;
   flex-direction: column;
-  box-shadow:
-    30px 0 80px rgba(0, 0, 0, 0.5),
+  box-shadow: 30px 0 80px rgba(0, 0, 0, 0.5),
     inset -1px 0 0 rgba(255, 255, 255, 0.05);
   overflow-y: auto;
 }
@@ -282,8 +348,7 @@ body {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.1),
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   color: inherit;
   cursor: pointer;
@@ -299,9 +364,7 @@ body {
   background: rgba(255, 255, 255, 0.1);
   color: var(--icon-accent);
   transform: translateY(-2px) scale(1.02);
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.35),
-    0 0 26px var(--icon-accent),
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 26px var(--icon-accent),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -321,10 +384,6 @@ body {
   --icon-accent: #b884ff;
 }
 
-/* .element-panel-icon:active {
-  cursor: grabbing;
-} */
-
 .element-panel-detail {
   --panel-accent: var(--accent);
   flex: 1;
@@ -338,8 +397,7 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.15),
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
@@ -440,6 +498,10 @@ body {
   top: 0.35rem;
 }
 
+/* --------------------------------------------------------------------------
+   7. Page Layout & Content
+   -------------------------------------------------------------------------- */
+
 .page {
   display: none;
   flex-direction: column;
@@ -477,6 +539,10 @@ body {
   pointer-events: none;
 }
 
+/* --------------------------------------------------------------------------
+   8. Nature Hints (Tooltips)
+   -------------------------------------------------------------------------- */
+
 .nature-hint {
   --hint-shift: 0px;
   position: absolute;
@@ -492,8 +558,7 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.3),
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   color: rgba(242, 245, 255, 0.92);
   font-size: 0.82rem;
@@ -502,7 +567,7 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
   display: flex;
   justify-content: flex-start;
@@ -538,6 +603,10 @@ body {
   max-width: 540px;
   margin-bottom: 0.25rem;
 }
+
+/* --------------------------------------------------------------------------
+   9. Form Elements
+   -------------------------------------------------------------------------- */
 
 .text-input {
   width: 100%;
@@ -587,6 +656,10 @@ body {
   background: rgba(5, 6, 13, 0.9);
 }
 
+/* --------------------------------------------------------------------------
+   10. Save & Record Buttons
+   -------------------------------------------------------------------------- */
+
 .save-btn {
   align-self: center;
   padding: 0.85rem 2.5rem;
@@ -596,8 +669,7 @@ body {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.15),
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.92);
   font-weight: 500;
@@ -617,10 +689,8 @@ body {
   transform: translateY(-3px) scale(1.02);
   border-color: rgba(120, 244, 255, 0.3);
   background: rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.25),
-    0 0 20px rgba(120, 244, 255, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(120, 244, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .save-btn[data-state="saving"] {
@@ -755,11 +825,16 @@ body {
   }
 }
 
+/* --------------------------------------------------------------------------
+   12. Sidebar
+   -------------------------------------------------------------------------- */
+
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(2, 4, 10, 0.55);
   backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -775,7 +850,7 @@ body {
   position: fixed;
   top: 0;
   right: 0;
-  width: min(360px, 90vw);
+  width: min(360px, 80vw);
   height: 100vh;
   padding: 2rem 1.75rem;
   /* Enhanced glassmorphism for sidebar */
@@ -783,8 +858,7 @@ body {
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  box-shadow:
-    -30px 0 80px rgba(0, 0, 0, 0.6),
+  box-shadow: -30px 0 80px rgba(0, 0, 0, 0.6),
     inset 1px 0 0 rgba(255, 255, 255, 0.05);
   transform: translateX(100%);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -846,8 +920,7 @@ body {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.1),
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -857,9 +930,7 @@ body {
   border-color: rgba(111, 228, 255, 0.4);
   background: rgba(255, 255, 255, 0.06);
   transform: translateY(-2px);
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.2),
-    0 0 16px rgba(111, 228, 255, 0.1),
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 16px rgba(111, 228, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
@@ -951,6 +1022,10 @@ body {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* --------------------------------------------------------------------------
+   11. Nav Bar
+   -------------------------------------------------------------------------- */
+
 .nav-bar {
   position: fixed;
   bottom: 6rem;
@@ -976,7 +1051,7 @@ body {
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   display: flex;
   align-items: center;
@@ -985,41 +1060,19 @@ body {
   filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.55));
 }
 
+.nav-item:hover,
+.nav-item:active {
+  box-shadow: 0 0 15px rgba(120, 244, 255, 0.25),
+    inset 0 0 10px rgba(120, 244, 255, 0.1);
+}
+
 .nav-item::before {
   content: none;
 }
 
-/* .nav-item::after {
-  content: attr(data-label);
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translate(-50%, 6px);
-  background: rgba(6, 9, 18, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 999px;
-  padding: 0.15rem 0.65rem;
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  white-space: nowrap;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
-} */
-
 .nav-item:hover {
   transform: translateY(-2px);
 }
-
-/* .nav-item:hover::after,
-.nav-item:focus-visible::after,
-.nav-item.nav-item--show-label::after {
-  opacity: 1;
-  transform: translate(-50%, 0);
-} */
 
 .nav-item canvas {
   position: absolute;
@@ -1065,8 +1118,7 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    0 18px 34px rgba(0, 0, 0, 0.55),
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   font-size: 0.75rem;
   letter-spacing: 0.01em;
@@ -1104,8 +1156,7 @@ body {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.2),
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
@@ -1113,32 +1164,47 @@ body {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  z-index: 13;
+  z-index: 1000;
+  isolation: isolate;
   color: inherit;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.sidebar-toggle.open {
-  display: none;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-toggle span {
   width: 20px;
   height: 2px;
   background: var(--text-color);
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease, background 0.25s ease;
+}
+
+/* When sidebar is open, move toggle to sidebar edge */
+.sidebar-toggle.open {
+  right: min(360px, 90vw);
+  transform: translateY(-50%) translateX(50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  z-index: 1200;
+  border-color: rgba(120, 244, 255, 0.4);
+  box-shadow: 0 0 16px rgba(120, 244, 255, 0.25), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Subtle indicator when open */
+.sidebar-toggle.open span {
+  background: rgba(120, 244, 255, 0.9);
 }
 
 .sidebar-toggle.open span:nth-child(1) {
-  transform: translateY(4px) rotate(45deg);
+  transform: translateY(0) rotate(0);
 }
 
 .sidebar-toggle.open span:nth-child(2) {
-  opacity: 0;
+  opacity: 1;
+  transform: scaleX(0.6);
 }
 
 .sidebar-toggle.open span:nth-child(3) {
-  transform: translateY(-4px) rotate(-45deg);
+  transform: translateY(0) rotate(0);
 }
 
 @media (max-width: 768px) {

@@ -1,6 +1,5 @@
 # Node / package
 node_modules/
-client/node_modules/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
@@ -8,8 +7,6 @@ pnpm-lock.yaml
 # Build artifacts
 dist/
 build/
-client/dist/
-client/build/
 
 # Environment / local config
 .env
